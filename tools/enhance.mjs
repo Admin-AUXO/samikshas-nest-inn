@@ -8,25 +8,30 @@ const homeOut = path.join(root, 'src/assets/home');
 const spotOut = path.join(root, 'src/assets/spots');
 
 const home = {
-  'lawn': { src: 'abnb_fa489b0c-00e6-44e7-b1ed-d9230cce4ada.jpg' },
-  'balcony-view': { src: 'abnb_b920df7b-f1fc-4cbd-8725-e83567812cef.jpg', crop: { left: 0.22, top: 0, width: 0.78, height: 1 } },
-  'bonfire': { src: 'abnb_c50e21a0-c99d-4991-8b87-f8b2b5176cbe.jpg' },
-  'bonfire-evening': { src: 'site_770ad7443bb376372f498784a90abe04.jpg' },
-  'sunset': { src: 'abnb_d1f88021-9810-4942-b557-1243655bf9f4.jpg' },
   'mist-valley': { src: 'site_39ede68e4fed0148994d395b44be991f.jpg' },
-  'tea-hills': { src: 'site_254dc5398c8aa185f6ddb1f8465d931f.jpg' },
-  'tents': { src: 'site_1287cc39b1f98e761d75f081fa0cea72.jpg' },
-  'bedroom-1': { src: 'abnb_dc3aaa8b-f3f4-4da9-bba9-84538339dd15.jpeg', crop: { left: 0.1, top: 0.28, width: 0.9, height: 0.72 } },
-  'bedroom-2': { src: 'abnb_a7395dea-000c-4b86-9fc8-a0b061fe98a3.jpeg' },
-  'bedroom-3': { src: 'abnb_1d7326fb-499c-42e4-93de-481998e2e575.jpeg', crop: { left: 0.2, top: 0, width: 0.8, height: 1 } },
-  'bedroom-4': { src: 'abnb_0df3480c-9718-4034-8da4-673b803defe6.jpeg' },
-  'bedroom-alt-1': { src: 'site_e921a95155b990c1198ee5fddb439fe4.jpg' },
-  'bedroom-alt-2': { src: 'site_924c121d244b5fc682853fe5b2f79e2e.jpg' },
-  'dining': { src: 'abnb_355538ee-e6dc-455c-af33-2b077e3da199.jpg' },
-  'living-1': { src: 'site_f08adc9d85202bd380c1f5bde1483913.jpg' },
-  'living-2': { src: 'site_f374131014d301ea9daeb8223986e164.jpg' },
-  'lounge': { src: 'site_bc72aa86e60645f86a584b7a9bed91cb.jpg' },
-  'cottage-exterior': { src: 'site_ffb54af799f372556d291b45512a9841.jpg', crop: { left: 0, top: 0.04, width: 1, height: 0.38 } }
+  'lawn-hedge': { src: 'airbnb/a79.jpg' },
+  'estate-view': { src: 'airbnb/a65.jpg' },
+  'tea-hills': { src: 'airbnb/a55.jpg' },
+  'misty-roof': { src: 'airbnb/a06.jpg' },
+  'sunrise': { src: 'airbnb/a13.jpg' },
+  'aerial': { src: 'airbnb/a08.jpg' },
+  'cottage-lawn': { src: 'airbnb/a10.jpg' },
+  'cottage-garden': { src: 'airbnb/a69.jpg', crop: { left: 0, top: 0.1, width: 1, height: 0.8 } },
+  'lawn': { src: 'abnb_fa489b0c-00e6-44e7-b1ed-d9230cce4ada.jpg' },
+  'bonfire': { src: 'abnb_c50e21a0-c99d-4991-8b87-f8b2b5176cbe.jpg' },
+  'bonfire-tents': { src: 'airbnb/a74.jpg' },
+  'bonfire-evening': { src: 'airbnb/a58.jpg' },
+  'grill': { src: 'airbnb/a11.jpg' },
+  'bedroom-1': { src: 'airbnb/a43.jpg' },
+  'bedroom-2': { src: 'airbnb/a42.jpg' },
+  'bedroom-3': { src: 'airbnb/a49.jpg' },
+  'bedroom-4': { src: 'airbnb/a39.jpg' },
+  'bathroom': { src: 'airbnb/a45.jpg' },
+  'dining': { src: 'airbnb/a82.jpg' },
+  'living-1': { src: 'airbnb/a63.jpg' },
+  'living-2': { src: 'airbnb/a60.jpg' },
+  'lounge': { src: 'airbnb/a87.jpg' },
+  'estate-track': { src: 'airbnb/a24.jpg' }
 };
 
 const spots = {

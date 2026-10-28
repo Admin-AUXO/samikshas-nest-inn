@@ -3,44 +3,48 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { homeImg } from '../lib/images';
-import { menu, feast, menuNotes } from '../data/menu';
+import { menu, combo, extras, menuNotes } from '../data/menu';
 import { waLink } from '../data/site';
 
-const order = waLink("Hi, we're staying at Samiksha's Nest Inn. Could you share the menu card and prices?");
+const order = waLink("Hi, we're staying at Samiksha's Nest Inn and would like to place a food order.");
 ---
-<Base title="Dining" description="Breakfast, lunch, dinner and barbecue at Samiksha's Nest Inn, Kotagiri. Home-style South Indian food cooked to order by our caretaker.">
+<Base title="Dining" description="The full menu at Samiksha's Nest Inn, Kotagiri: South Indian tiffin, biriyani, meals, gravies and barbecue, cooked to order by the caretaker, with prices.">
   <section class="page-hero">
     <div class="page-hero__img">
-      <Image src={homeImg('bonfire')} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
+      <Image src={homeImg('bonfire-tents')} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
     </div>
     <div class="wrap page-hero__body">
       <p class="eyebrow">Dining</p>
       <h1>Home-style food, cooked to order</h1>
-      <p>Our caretaker Pradeep cooks every meal fresh for your group. Order lunch and dinner at least four hours ahead.</p>
+      <p>Our caretaker Pradeep cooks every meal fresh for your group. Order at least four hours ahead.</p>
     </div>
   </section>
 
+  <nav class="tabs" aria-label="Menu sections">
+    <div class="wrap tabs__inner">
+      {menu.map((c) => <a href={`#${c.id}`}>{c.title}</a>)}
+      <a href="#extras">Extras</a>
+    </div>
+  </nav>
+
   <section class="section section--mist">
     <div class="wrap">
-      <nav class="menu-tabs" aria-label="Menu sections">
-        {menu.map((c) => <a href={`#${c.id}`}>{c.title}</a>)}
-      </nav>
-      <div class="menu-card">
+      <div class="menu">
         {menu.map((course) => (
           <section class="course" id={course.id} aria-labelledby={`${course.id}-title`}>
             <header class="course__head">
-              <p class="eyebrow">{course.kicker}</p>
-              <h2 id={`${course.id}-title`} class="title">{course.title}</h2>
-              <p class="course__intro">{course.intro}</p>
+              <h2 id={`${course.id}-title`}>{course.title}</h2>
+              {course.note && <p>{course.note}</p>}
             </header>
             <ul class="dishes">
               {course.dishes.map((d) => (
                 <li class="dish">
-                  <span class:list={['dish__mark', d.veg ? 'dish__mark--veg' : 'dish__mark--non']} aria-label={d.veg ? 'Vegetarian' : 'Non-vegetarian'} role="img"></span>
-                  <div>
-                    <p class="dish__name">{d.name}{d.favourite && <Icon name="star" class="dish__star" />}</p>
-                    {d.text && <p class="dish__text">{d.text}</p>}
-                  </div>
+                  <span class:list={['mark', d.veg ? 'mark--veg' : 'mark--non']} role="img" aria-label={d.veg ? 'Vegetarian' : 'Non-vegetarian'}></span>
+                  <span class="dish__body">
+                    <span class="dish__name">{d.name}{d.favourite && <Icon name="star" class="star" />}</span>
+                    {d.detail && <span class="dish__detail">{d.detail}</span>}
+                  </span>
+                  <span class="dish__price">{d.price}</span>
                 </li>
               ))}
             </ul>
@@ -48,181 +52,206 @@ const order = waLink("Hi, we're staying at Samiksha's Nest Inn. Could you share 
         ))}
       </div>
       <p class="legend">
-        <span><span class="dish__mark dish__mark--veg"></span> Vegetarian</span>
-        <span><span class="dish__mark dish__mark--non"></span> Non-vegetarian</span>
-        <span><Icon name="star" class="dish__star" /> Mentioned in guest reviews</span>
+        <span><span class="mark mark--veg"></span> Vegetarian</span>
+        <span><span class="mark mark--non"></span> Non-vegetarian</span>
+        <span><Icon name="star" class="star" /> Named in guest reviews</span>
       </p>
     </div>
   </section>
 
-  <section class="section section--dark" id="feast">
-    <div class="wrap feast">
-      <div class="frame feast__img">
-        <Image src={homeImg('bonfire-evening')} alt="Guests around the bonfire on the lawn" widths={[500, 900, 1200]} sizes="(min-width: 900px) 45vw, 100vw" />
+  <section class="section section--dark" id="combo">
+    <div class="wrap feature">
+      <div class="frame feature__img">
+        <Image src={homeImg('grill')} alt="Chicken on the barbecue grill" widths={[500, 900, 1300]} sizes="(min-width: 900px) 45vw, 100vw" />
       </div>
-      <div class="feast__copy">
-        <p class="eyebrow">For groups</p>
-        <h2 class="title">{feast.title}</h2>
-        <p class="lede">{feast.text}</p>
+      <div class="feature__copy">
+        <p class="eyebrow">For the table</p>
+        <h2 class="title">{combo.title} <span class="feature__price">{combo.price}</span></h2>
+        <ul class="feature__list">
+          {combo.items.map((i) => <li>{i}</li>)}
+        </ul>
         <blockquote>
-          <p>{feast.quote}</p>
-          <cite>{feast.by}</cite>
+          <p>He personally prepared a delicious dinner with nearly 10 dishes, all of which were exceptional in taste. The BBQ chicken is a must-try!</p>
+          <cite>Kumar, March 2025</cite>
         </blockquote>
       </div>
     </div>
   </section>
 
-  <section class="section" id="notes">
-    <div class="wrap notes">
+  <section class="section" id="extras">
+    <div class="wrap two">
       <div>
+        <p class="eyebrow">Extras</p>
+        <h2 class="title">Bonfires, treks and celebrations</h2>
+        <ul class="extras">
+          {extras.map((e) => (
+            <li>
+              <span><strong>{e.name}</strong><span class="extras__detail">{e.detail}</span></span>
+              <span class="extras__price">{e.price}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div id="notes">
         <p class="eyebrow">How ordering works</p>
         <h2 class="title">Good to know</h2>
-      </div>
-      <div>
-        <ul class="notes__list">
+        <ul class="notes">
           {menuNotes.map((n) => <li>{n}</li>)}
         </ul>
-        <a class="btn btn--primary" href={order} target="_blank" rel="noopener"><Icon name="whatsapp" /> Ask for the menu and prices</a>
+        <a class="btn btn--primary" href={order} target="_blank" rel="noopener"><Icon name="whatsapp" /> Order on WhatsApp</a>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .menu-tabs {
+  .tabs {
     position: sticky;
     top: calc(4.5rem + env(safe-area-inset-top, 0px));
     z-index: 5;
+    background: rgba(251, 249, 244, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tabs__inner {
     display: flex;
     gap: 1.75rem;
     overflow-x: auto;
     padding-block: 1rem;
-    margin-bottom: 2rem;
-    background: var(--mist);
-    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
   }
 
-  .menu-tabs a {
+  .tabs__inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs a {
     flex: none;
     font-size: 0.9rem;
     text-decoration: none;
     color: var(--muted);
   }
 
-  .menu-tabs a:hover {
+  .tabs a:hover {
     color: var(--ink);
   }
 
-  .menu-card {
+  .menu {
     background: var(--paper);
-    padding: clamp(1.5rem, 5vw, 4.5rem);
+    padding: clamp(1.75rem, 5vw, 4.5rem);
     display: grid;
-    gap: clamp(3rem, 6vw, 4.5rem);
-  }
-
-  .course {
-    display: grid;
-    gap: 1.75rem;
-    scroll-margin-top: 9rem;
+    gap: clamp(3rem, 5vw, 4rem) 5rem;
   }
 
   @media (min-width: 900px) {
-    .course {
-      grid-template-columns: 1fr 2fr;
-      gap: 4rem;
+    .menu {
+      grid-template-columns: 1fr 1fr;
     }
   }
 
-  .course + .course {
-    padding-top: clamp(3rem, 6vw, 4.5rem);
-    border-top: 1px solid var(--line);
+  .course {
+    scroll-margin-top: 9rem;
+    align-self: start;
   }
 
   .course__head {
-    display: grid;
-    gap: 0.75rem;
-    align-content: start;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.9rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--ink);
   }
 
-  .course__intro {
-    color: var(--muted);
-    max-width: 22rem;
+  .course__head h2 {
+    font-size: clamp(1.6rem, 2.6vw, 2rem);
+  }
+
+  .course__head p {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass);
   }
 
   .dishes {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-  }
-
-  @media (min-width: 700px) {
-    .dishes {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 2.5rem;
-    }
   }
 
   .dish {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     gap: 0.85rem;
-    padding-block: 1rem;
+    align-items: baseline;
+    padding-block: 0.8rem;
     border-bottom: 1px solid var(--line);
   }
 
-  .dish__mark {
+  .mark {
     display: inline-block;
     position: relative;
-    width: 0.8rem;
-    height: 0.8rem;
-    margin-top: 0.4rem;
+    width: 0.75rem;
+    height: 0.75rem;
     border: 1.5px solid;
     border-radius: 2px;
+    transform: translateY(0.05rem);
   }
 
-  .dish__mark::after {
+  .mark::after {
     content: '';
     position: absolute;
     inset: 2px;
     border-radius: 50%;
   }
 
-  .dish__mark--veg {
+  .mark--veg {
     border-color: #2f8a3e;
   }
 
-  .dish__mark--veg::after {
+  .mark--veg::after {
     background: #2f8a3e;
   }
 
-  .dish__mark--non {
+  .mark--non {
     border-color: #9b3a2a;
   }
 
-  .dish__mark--non::after {
+  .mark--non::after {
     background: #9b3a2a;
+  }
+
+  .dish__body {
+    display: grid;
   }
 
   .dish__name {
     font-family: var(--serif);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     line-height: 1.35;
   }
 
-  :global(.dish__star) {
+  .dish__detail {
+    font-size: 0.825rem;
+    color: var(--muted);
+  }
+
+  .dish__price {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  :global(.star) {
     display: inline-block;
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 0.75rem;
+    height: 0.75rem;
     margin-left: 0.4rem;
     color: var(--brass);
     vertical-align: 0.05em;
-  }
-
-  .dish__text {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: 0.15rem;
   }
 
   .legend {
@@ -240,85 +269,137 @@ const order = waLink("Hi, we're staying at Samiksha's Nest Inn. Could you share 
     gap: 0.5rem;
   }
 
-  .legend .dish__mark {
-    margin-top: 0;
-  }
-
-  .legend :global(.dish__star) {
+  .legend :global(.star) {
     margin-left: 0;
   }
 
-  .feast {
+  .feature {
     display: grid;
     gap: 3rem;
     align-items: center;
   }
 
   @media (min-width: 900px) {
-    .feast {
+    .feature {
       grid-template-columns: 1fr 1fr;
       gap: 6rem;
     }
   }
 
-  .feast__img {
-    aspect-ratio: 4 / 5;
+  .feature__img {
+    aspect-ratio: 4 / 3;
   }
 
-  .feast__copy {
+  .feature__copy {
     display: grid;
     gap: 1.25rem;
   }
 
-  .feast blockquote {
-    margin: 0.5rem 0 0;
+  .feature__price {
+    font-family: var(--sans);
+    font-size: 0.5em;
+    color: var(--brass-soft);
+    vertical-align: middle;
+    margin-left: 0.5rem;
+  }
+
+  .feature__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0;
+    color: rgba(251, 249, 244, 0.85);
+  }
+
+  .feature__list li:not(:last-child)::after {
+    content: '·';
+    margin-inline: 0.7rem;
+    color: var(--brass-soft);
+  }
+
+  .feature blockquote {
+    margin: 0.75rem 0 0;
     padding-top: 1.25rem;
     border-top: 1px solid var(--line-light);
   }
 
-  .feast blockquote p {
+  .feature blockquote p {
     font-family: var(--serif);
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     line-height: 1.45;
   }
 
-  .feast cite {
+  .feature cite {
     display: block;
     margin-top: 0.5rem;
     font-style: normal;
     font-size: 0.85rem;
-    color: rgba(250, 247, 241, 0.6);
+    color: rgba(251, 249, 244, 0.6);
   }
 
-  .notes {
+  .two {
     display: grid;
-    gap: 2rem;
+    gap: 4rem;
   }
 
   @media (min-width: 900px) {
-    .notes {
-      grid-template-columns: 1fr 1.6fr;
+    .two {
+      grid-template-columns: 1fr 1fr;
       gap: 6rem;
     }
   }
 
-  .notes .eyebrow {
+  .two .eyebrow {
     margin-bottom: 1rem;
   }
 
-  .notes__list {
+  .two .title {
+    margin-bottom: 1.75rem;
+  }
+
+  #notes {
+    scroll-margin-top: 9rem;
+  }
+
+  .extras,
+  .notes {
     list-style: none;
     margin: 0 0 2rem;
     padding: 0;
+    border-top: 1px solid var(--line);
   }
 
-  .notes__list li {
+  .extras li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
     padding-block: 1rem;
     border-bottom: 1px solid var(--line);
+  }
+
+  .extras strong {
+    display: block;
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.15rem;
+  }
+
+  .extras__detail {
+    font-size: 0.85rem;
     color: var(--muted);
   }
 
-  .notes__list li:first-child {
-    border-top: 1px solid var(--line);
+  .extras__price {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .notes li {
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
   }
 </style>

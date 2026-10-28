@@ -39,15 +39,23 @@ Drive times were measured on Google Maps from the property pin (11.4149477, 76.8
 
 ## Images
 
-- `raw/`: the original property photos, from the current site and the Airbnb listing.
+- `raw/`: the original property photos from the current site, with all 87 Airbnb listing photos in `raw/airbnb/`.
 - `raw_spots/`: Wikimedia Commons photos of nearby places.
 
 `node tools/enhance.mjs` builds `src/assets/` from these. It crops, upscales small images up to 2× with Lanczos and sharpening, and applies one warm colour grade so all the photos match. Astro then serves responsive WebP.
 
 This is resampling, not AI upscaling. Photos that were 800 px originals will still look soft at full width. New photos taken at 3000 px or more would make the biggest visual difference.
 
+## Logo
+
+`brand/samikshas-nest-inn-logo.png` is the owners' full-colour logo, captured from their current site as a transparent PNG.
+
+`node tools/logo.mjs` builds the files the site uses from it:
+- one-colour white and navy versions in `src/assets/brand/`, which the header and footer use;
+- the house-mark favicons in `public/`.
+
 ## To confirm with the owners before going live
 
-- The menu dishes. The guest favourites come from reviews; the rest is a typical home-style menu.
+- The menu and prices. They are copied from the menu-card photos on the Airbnb listing.
 - Check-in and check-out times, and the pet policy.
 - Permission to use the property photos, and the Google Business Profile link.

@@ -3,6 +3,9 @@ import '../styles/global.css';
 import { site, waLink, nav } from '../data/site';
 import Icon from '../components/Icon.astro';
 import { url, stripBase } from '../lib/url';
+import { getImage } from 'astro:assets';
+import logoLight from '../assets/brand/logo-light.png';
+import logoDark from '../assets/brand/logo-dark.png';
 
 interface Props {
   title: string;
@@ -15,6 +18,12 @@ const { title, description, schema = [], transparentHeader = true } = Astro.prop
 const path = stripBase(Astro.url.pathname).replace(/\/$/, '') || '/';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = path === '/' ? `${site.name} · Tea-estate cottage in Kotagiri, Nilgiris` : `${title} · ${site.name}`;
+
+const [light, dark, footerLogo] = await Promise.all([
+  getImage({ src: logoLight, width: 360, format: 'png' }),
+  getImage({ src: logoDark, width: 360, format: 'png' }),
+  getImage({ src: logoLight, width: 640, format: 'png' })
+]);
 
 const sitemap = [
   {
@@ -30,10 +39,10 @@ const sitemap = [
   {
     title: 'Dining',
     links: [
-      { href: '/dining/#breakfast', label: 'Breakfast' },
-      { href: '/dining/#meals', label: 'Lunch and dinner' },
-      { href: '/dining/#fire', label: 'Bonfire and grill' },
-      { href: '/dining/#feast', label: 'Group dinners' },
+      { href: '/dining/#tiffin', label: 'Tiffin and breakfast' },
+      { href: '/dining/#meals', label: 'Rice and meals' },
+      { href: '/dining/#starters', label: 'Starters and barbecue' },
+      { href: '/dining/#extras', label: 'Bonfires and treks' },
       { href: '/dining/#notes', label: 'How ordering works' }
     ]
   },
@@ -58,8 +67,10 @@ const sitemap = [
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#1f3329" />
-    <link rel="icon" href={url("/favicon.svg")} type="image/svg+xml" />
+    <meta name="theme-color" content="#14294a" />
+    <link rel="icon" href={url("/favicon-32.png")} sizes="32x32" type="image/png" />
+    <link rel="icon" href={url("/favicon-64.png")} sizes="64x64" type="image/png" />
+    <link rel="apple-touch-icon" href={url("/apple-touch-icon.png")} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -72,7 +83,10 @@ const sitemap = [
     <a class="sr-only" href="#main">Skip to content</a>
     <header class:list={['site-header', { 'site-header--solid': !transparentHeader }]} data-header>
       <div class="wrap site-header__inner">
-        <a class="wordmark" href={url("/")}>Samiksha’s Nest Inn</a>
+        <a class="logo" href={url("/")} aria-label="Samiksha’s Nest Inn, home">
+          <img class="logo__light" src={light.src} alt="" width="180" height="63" />
+          <img class="logo__dark" src={dark.src} alt="" width="180" height="63" />
+        </a>
         <nav class="nav" aria-label="Main">
           {nav.map((item) => (
             <a href={url(item.href)} aria-current={path !== '/' && item.href.startsWith(path) ? 'page' : undefined}>{item.label}</a>
@@ -100,7 +114,7 @@ const sitemap = [
     <footer class="site-footer">
       <div class="wrap">
         <div class="site-footer__cta">
-          <p class="site-footer__statement">Samiksha’s Nest Inn</p>
+          <img class="site-footer__logo" src={footerLogo.src} alt="Samiksha’s Nest Inn, Cottage and Vacation home" width="320" height="112" loading="lazy" />
           <div class="site-footer__buttons">
             <a class="btn btn--brass" href={site.airbnb} target="_blank" rel="noopener">Book on Airbnb</a>
             <a class="btn btn--outline-light" href={waLink()} target="_blank" rel="noopener"><Icon name="whatsapp" /> WhatsApp</a>
@@ -160,7 +174,7 @@ const sitemap = [
       .site-header.is-scrolled,
       .site-header--solid,
       .site-header.is-open {
-        background: rgba(250, 247, 241, 0.95);
+        background: rgba(251, 249, 244, 0.95);
         backdrop-filter: blur(14px);
         color: var(--ink);
         box-shadow: 0 1px 0 var(--line);
@@ -174,12 +188,35 @@ const sitemap = [
         min-height: 4.5rem;
       }
 
-      .wordmark {
-        font-family: var(--serif);
-        font-size: 1.3rem;
-        letter-spacing: -0.005em;
-        text-decoration: none;
-        white-space: nowrap;
+      .logo {
+        position: relative;
+        display: block;
+        width: clamp(8.5rem, 14vw, 10.5rem);
+        aspect-ratio: 1653 / 579;
+      }
+
+      .logo img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        transition: opacity 0.4s var(--ease);
+      }
+
+      .logo__dark {
+        opacity: 0;
+      }
+
+      .site-header.is-scrolled .logo__dark,
+      .site-header--solid .logo__dark,
+      .site-header.is-open .logo__dark {
+        opacity: 1;
+      }
+
+      .site-header.is-scrolled .logo__light,
+      .site-header--solid .logo__light,
+      .site-header.is-open .logo__light {
+        opacity: 0;
       }
 
       .nav {
@@ -263,7 +300,7 @@ const sitemap = [
 
       .site-footer {
         background: var(--ink);
-        color: rgba(250, 247, 241, 0.72);
+        color: rgba(251, 249, 244, 0.72);
         padding-block: clamp(4rem, 8vw, 6rem) calc(2rem + 5rem);
         font-size: 0.925rem;
       }
@@ -293,12 +330,9 @@ const sitemap = [
         border-bottom: 1px solid var(--line-light);
       }
 
-      .site-footer__statement {
-        font-family: var(--serif);
-        font-size: clamp(2rem, 5vw, 3.75rem);
-        line-height: 1;
-        color: var(--paper);
-        letter-spacing: -0.02em;
+      .site-footer__logo {
+        width: clamp(12rem, 24vw, 20rem);
+        height: auto;
       }
 
       .site-footer__buttons {
@@ -386,7 +420,7 @@ const sitemap = [
         grid-template-columns: auto 1fr;
         gap: 0.6rem;
         padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
-        background: rgba(250, 247, 241, 0.96);
+        background: rgba(251, 249, 244, 0.96);
         backdrop-filter: blur(12px);
         box-shadow: 0 -1px 0 var(--line);
       }

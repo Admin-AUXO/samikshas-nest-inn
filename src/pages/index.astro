@@ -47,18 +47,20 @@ const schema = [
   }
 ];
 
-const slides = ['mist-valley', 'tea-hills', 'lawn', 'balcony-view'];
+const slides = ['lawn-hedge', 'mist-valley', 'estate-view', 'misty-roof'];
 
 const photos = [
-  { image: 'lawn', alt: 'The private lawn above the tea estate', span: 'wide' as const },
+  { image: 'lawn-hedge', alt: 'The lawn and hedge above the tea estate', span: 'wide' as const },
+  { image: 'aerial', alt: 'The cottage and lawn from above', span: 'tall' as const },
   { image: 'living-1', alt: 'First living room' },
-  { image: 'bonfire-evening', alt: 'Bonfire on the lawn at night', span: 'tall' as const },
-  { image: 'dining', alt: 'Dining room' },
+  { image: 'dining', alt: 'Dining table by the window', span: 'tall' as const },
   { image: 'living-2', alt: 'Second living room' },
-  { image: 'cottage-exterior', alt: 'The cottage from the drive', span: 'wide' as const },
+  { image: 'cottage-lawn', alt: 'The cottage and garden path', span: 'wide' as const },
   { image: 'lounge', alt: 'Covered lounge' },
-  { image: 'sunset', alt: 'Sunset over the valley' },
-  { image: 'tents', alt: 'Tents pitched on the lawn' }
+  { image: 'bonfire-tents', alt: 'Bonfire and tents on the lawn', span: 'wide' as const },
+  { image: 'sunrise', alt: 'Sunrise over the valley' },
+  { image: 'cottage-garden', alt: 'The cottage from the garden' },
+  { image: 'bathroom', alt: 'One of the en suite bathrooms' }
 ];
 ---
 <Base title="Home" description={description} schema={schema}>
@@ -304,8 +306,8 @@ const photos = [
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(180deg, rgba(10, 16, 13, 0.5) 0%, rgba(10, 16, 13, 0) 28%),
-      linear-gradient(0deg, rgba(10, 16, 13, 0.82) 0%, rgba(10, 16, 13, 0.35) 45%, rgba(10, 16, 13, 0) 70%);
+      linear-gradient(180deg, rgba(8, 18, 36, 0.5) 0%, rgba(8, 18, 36, 0) 28%),
+      linear-gradient(0deg, rgba(8, 18, 36, 0.82) 0%, rgba(8, 18, 36, 0.35) 45%, rgba(8, 18, 36, 0) 70%);
   }
 
   .hero__body {
@@ -317,7 +319,7 @@ const photos = [
   }
 
   .hero .eyebrow {
-    color: rgba(250, 247, 241, 0.8);
+    color: rgba(251, 249, 244, 0.8);
   }
 
   .hero h1 {
@@ -329,7 +331,7 @@ const photos = [
   .hero__lede {
     font-size: clamp(1.05rem, 1.5vw, 1.25rem);
     max-width: 34rem;
-    color: rgba(250, 247, 241, 0.85);
+    color: rgba(251, 249, 244, 0.85);
   }
 
   .hero__rating {
@@ -339,8 +341,8 @@ const photos = [
     width: fit-content;
     font-size: 0.875rem;
     text-decoration: none;
-    color: rgba(250, 247, 241, 0.9);
-    border-bottom: 1px solid rgba(250, 247, 241, 0.35);
+    color: rgba(251, 249, 244, 0.9);
+    border-bottom: 1px solid rgba(251, 249, 244, 0.35);
     padding-bottom: 0.2rem;
   }
 
@@ -612,7 +614,7 @@ const photos = [
     font-family: var(--serif);
     font-size: 1.15rem;
     line-height: 1.6;
-    color: rgba(250, 247, 241, 0.9);
+    color: rgba(251, 249, 244, 0.9);
   }
 
   .routes {
@@ -764,7 +766,7 @@ const photos = [
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: rgba(10, 16, 13, 0.62);
+    background: rgba(8, 18, 36, 0.62);
   }
 
   .cta__body {
@@ -775,7 +777,7 @@ const photos = [
   }
 
   .cta .eyebrow {
-    color: rgba(250, 247, 241, 0.75);
+    color: rgba(251, 249, 244, 0.75);
   }
 
   .cta__form {

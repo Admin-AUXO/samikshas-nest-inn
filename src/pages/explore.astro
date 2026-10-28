@@ -158,11 +158,12 @@ const mapLink = (name: string) =>
     position: sticky;
     top: calc(4.5rem + env(safe-area-inset-top, 0px));
     z-index: 5;
-    background: rgba(250, 247, 241, 0.96);
+    background: rgba(251, 249, 244, 0.96);
     backdrop-filter: blur(10px);
   }
 
   .jump__inner {
+    scrollbar-width: none;
     display: flex;
     gap: 1.75rem;
     overflow-x: auto;
@@ -275,7 +276,7 @@ const mapLink = (name: string) =>
     padding-left: 1.1rem;
     display: grid;
     gap: 0.45rem;
-    color: rgba(250, 247, 241, 0.75);
+    color: rgba(251, 249, 244, 0.75);
     font-size: 0.95rem;
   }
 

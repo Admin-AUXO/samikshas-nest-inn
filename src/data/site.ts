@@ -107,7 +107,7 @@ export const faqs = [
   },
   {
     q: 'Are meals included?',
-    a: 'No. Our caretaker cooks to order and food is charged per dish. Order lunch and dinner at least 4 hours ahead. There is no guest kitchen.'
+    a: 'No. Our caretaker cooks to order from the menu, and food is charged per dish. Order at least 4 hours ahead; the kitchen runs from 8 am to 10 pm. Guests can’t use the kitchen, but outside food is welcome.'
   },
   {
     q: 'Do I need a Nilgiris e-pass?',
@@ -119,7 +119,7 @@ export const faqs = [
   },
   {
     q: 'Can you arrange cabs or treks?',
-    a: 'Yes. We arrange day cabs, airport and station transfers, local guides and treks.'
+    a: 'Yes. We arrange day cabs, airport and station transfers and local guides. A guided 5–6 km trek is ₹500 per person for groups of six or more, and a bonfire is ₹800 per evening.'
   },
   {
     q: 'Is it suitable for children?',
