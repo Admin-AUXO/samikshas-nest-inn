@@ -42,8 +42,10 @@ const badge = (size) =>
     .composite([{ input: mark, gravity: 'center' }])
     .png()
     .toBuffer()
-    .then((b) => sharp(b).resize(size, size).png().toFile(path.join(pub, size === 180 ? 'apple-touch-icon.png' : `favicon-${size}.png`)));
+    .then((b) => sharp(b).resize(size, size).png().toFile(path.join(pub, size === 180 ? 'apple-touch-icon.png' : size >= 192 ? `icon-${size}.png` : `favicon-${size}.png`)));
 await badge(180);
 await badge(64);
 await badge(32);
+await badge(192);
+await badge(512);
 console.log('done');

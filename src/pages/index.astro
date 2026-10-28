@@ -35,6 +35,8 @@ const schema = [
     },
     geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
     hasMap: site.mapsLink,
+    hasMenu: new URL(url('/dining/'), Astro.site).href,
+    knowsLanguage: ['en', 'ta'],
     numberOfRooms: 4,
     occupancy: { '@type': 'QuantitativeValue', maxValue: 12 },
     amenityFeature: amenities.map((a) => ({ '@type': 'LocationFeatureSpecification', name: a, value: true })),
@@ -63,7 +65,7 @@ const photos = [
   { image: 'bathroom', alt: 'One of the en suite bathrooms' }
 ];
 ---
-<Base title="Home" description={description} schema={schema}>
+<Base title="Home" description={description} schema={schema} markdown="/index.md">
   <section class="hero" aria-label="Introduction">
     <div class="hero__slides" aria-hidden="true">
       {slides.map((s, i) => (

@@ -26,6 +26,7 @@ jobs:
         env:
           SITE_URL: https://admin-auxo.github.io
           BASE_PATH: /samikshas-nest-inn
+          PUBLIC_NOINDEX: "true"
 
   deploy:
     needs: build

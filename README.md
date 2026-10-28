@@ -18,6 +18,24 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site 
 
 The workflow sets `SITE_URL` and `BASE_PATH`. Without them, the build targets https://samikshasnestinn.in at the root path, so the same code works when the domain is moved over.
 
+## SEO and machine-readable content
+
+- **Sitemap and robots:** `@astrojs/sitemap` writes `sitemap-index.xml`. `robots.txt` is generated and points to it.
+- **Structured data:**
+  - Home page: `LodgingBusiness` (address, geo, rooms, occupancy, amenities, menu link) and `FAQPage`.
+  - Dining: `Menu`, with INR prices.
+  - Area guide: an `ItemList` of `TouristAttraction`.
+  - Both subpages: `BreadcrumbList`.
+- **Ratings markup:** none, on purpose. Google ignores review markup a business adds about itself, and ratings copied from Airbnb aren't allowed.
+- **Share previews:** each page has its own Open Graph and Twitter image (1200 × 630), plus geo meta tags.
+- **`/llms.txt`** follows llmstxt.org. `/llms-full.txt` and `/index.md`, `/dining.md` and `/explore.md` hold clean Markdown versions of each page, and each page links to its copy with `rel="alternate" type="text/markdown"`. They're generated from `src/data/`, so they stay in sync with the site.
+- **Also included:** a web manifest with icons, a 404 page, and a skip link.
+- **Preview builds:** the GitHub Pages preview sets `PUBLIC_NOINDEX=true`. That serves `noindex` and a disallow-all `robots.txt`, so the preview never competes with the real domain. Builds without the flag are indexable.
+
+After the move to samikshasnestinn.in:
+- add the domain to Google Search Console and submit `sitemap-index.xml`;
+- link the site from the Google Business Profile and the Airbnb listing.
+
 ## Pages
 
 | Path | Content |

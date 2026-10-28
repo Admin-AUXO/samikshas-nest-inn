@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+<Base title="Page not found" description="This page doesn't exist. Head back to Samiksha's Nest Inn." transparentHeader={false}>
+  <section class="section missing">
+    <div class="wrap missing__body">
+      <p class="eyebrow">404</p>
+      <h1 class="title">This page doesn’t exist</h1>
+      <p class="lede">It may have moved. Try one of these instead.</p>
+      <div class="missing__links">
+        <a class="btn btn--primary" href={url('/')}>Home</a>
+        <a class="btn btn--ghost" href={url('/dining/')}>Menu</a>
+        <a class="btn btn--ghost" href={url('/explore/')}>Area guide</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .missing {
+    min-height: 70svh;
+    display: grid;
+    align-items: center;
+    padding-top: 9rem;
+  }
+
+  .missing__body {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+
+  .missing__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+</style>

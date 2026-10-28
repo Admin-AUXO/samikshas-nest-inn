@@ -5,12 +5,35 @@ import Icon from '../components/Icon.astro';
 import { spotImg } from '../lib/images';
 import { areas, itineraries, routes, arrival, weather, pack, essentials } from '../data/explore';
 import { site, waLink } from '../data/site';
+import { abs } from '../lib/markdown';
+import shareImg from '../assets/spots/kodanad.jpg';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Places to visit near Samiksha’s Nest Inn, Kotagiri',
+    itemListElement: areas.flatMap((a) => a.spots).map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: { '@type': 'TouristAttraction', name: s.name, description: s.text }
+    }))
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'Area guide', item: abs('/explore/') }
+    ]
+  }
+];
 
 const plan = waLink("Hi, we're planning a stay at Samiksha's Nest Inn. Could you help with a day plan and a cab?");
 const mapLink = (name: string) =>
   `https://www.google.com/maps/dir/?api=1&origin=${site.geo.lat},${site.geo.lng}&destination=${encodeURIComponent(name + ', Nilgiris')}`;
 ---
-<Base title="Area guide" description="Drive times from Samiksha's Nest Inn to Kotagiri, Coonoor and Ooty sights, day plans, how to get here, the Nilgiris e-pass and weather.">
+<Base title="Kotagiri, Coonoor and Ooty area guide" schema={schema} markdown="/explore.md" share={shareImg} shareAlt="Kodanad View Point near Kotagiri" description="Drive times from Samiksha's Nest Inn to Kotagiri, Coonoor and Ooty sights, day plans, how to get here, the Nilgiris e-pass and weather.">
   <section class="page-hero">
     <div class="page-hero__img">
       <Image src={spotImg('kodanad')} alt="" widths={[800, 1400, 1842]} sizes="100vw" loading="eager" />

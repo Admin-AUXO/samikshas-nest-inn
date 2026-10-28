@@ -4,11 +4,42 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import { homeImg } from '../lib/images';
 import { menu, combo, extras, menuNotes } from '../data/menu';
-import { waLink } from '../data/site';
+import { site, waLink } from '../data/site';
+import { abs } from '../lib/markdown';
+import shareImg from '../assets/home/bonfire-tents.jpg';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Menu',
+    name: `Menu at ${site.name}`,
+    inLanguage: 'en-IN',
+    url: abs('/dining/'),
+    hasMenuSection: menu.map((c) => ({
+      '@type': 'MenuSection',
+      name: c.title,
+      hasMenuItem: c.dishes.map((d) => ({
+        '@type': 'MenuItem',
+        name: d.name,
+        ...(d.detail ? { description: d.detail } : {}),
+        ...(d.veg ? { suitableForDiet: 'https://schema.org/VegetarianDiet' } : {}),
+        ...(/^₹\d[\d,]*$/.test(d.price) ? { offers: { '@type': 'Offer', price: d.price.replace(/[₹,]/g, ''), priceCurrency: 'INR' } } : {})
+      }))
+    }))
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: abs('/') },
+      { '@type': 'ListItem', position: 2, name: 'Dining', item: abs('/dining/') }
+    ]
+  }
+];
 
 const order = waLink("Hi, we're staying at Samiksha's Nest Inn and would like to place a food order.");
 ---
-<Base title="Dining" description="The full menu at Samiksha's Nest Inn, Kotagiri: South Indian tiffin, biriyani, meals, gravies and barbecue, cooked to order by the caretaker, with prices.">
+<Base title="Menu and dining" schema={schema} markdown="/dining.md" share={shareImg} shareAlt="Bonfire and tents on the lawn at Samiksha’s Nest Inn" description="The full menu at Samiksha's Nest Inn, Kotagiri: South Indian tiffin, biriyani, meals, gravies and barbecue, cooked to order by the caretaker, with prices.">
   <section class="page-hero">
     <div class="page-hero__img">
       <Image src={homeImg('bonfire-tents')} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" />
