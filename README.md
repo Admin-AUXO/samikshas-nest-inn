@@ -12,6 +12,12 @@ npm run dev
 npm run build
 ```
 
+## Deploy
+
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site and publishes it to GitHub Pages at https://admin-auxo.github.io/samikshas-nest-inn/.
+
+The workflow sets `SITE_URL` and `BASE_PATH`. Without them, the build targets https://samikshasnestinn.in at the root path, so the same code works when the domain is moved over.
+
 ## Pages
 
 | Path | Content |
