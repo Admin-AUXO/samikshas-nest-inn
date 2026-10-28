@@ -1,3 +1,5 @@
+import airbnb from './airbnb.json';
+
 export const site = {
   name: "Samiksha's Nest Inn",
   airbnb: 'https://www.airbnb.co.in/rooms/20239760',
@@ -20,7 +22,7 @@ export const site = {
   whatsapp: '918317307278',
   email: 'samikshasnestinn@gmail.com',
   hours: 'Daily, 9 am – 9 pm',
-  rating: { score: 4.63, count: 72, fiveStarShare: 74 },
+  rating: { score: airbnb.score, count: airbnb.count, superhost: airbnb.superhost },
   host: { name: 'Nivetha', cohost: 'Jegadeesh', caretaker: 'Pradeep', years: 9 }
 };
 
@@ -60,14 +62,7 @@ export const amenities = [
   'Extra mattresses'
 ];
 
-export const scores = [
-  { label: 'Check-in', value: 4.7 },
-  { label: 'Communication', value: 4.7 },
-  { label: 'Accuracy', value: 4.6 },
-  { label: 'Location', value: 4.6 },
-  { label: 'Cleanliness', value: 4.5 },
-  { label: 'Value', value: 4.4 }
-];
+export const scores = airbnb.scores;
 
 export const reviews = [
   {

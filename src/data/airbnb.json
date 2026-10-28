@@ -1,0 +1,32 @@
+{
+  "score": 4.63,
+  "count": 72,
+  "superhost": true,
+  "scores": [
+    {
+      "label": "Check-in",
+      "value": 4.7
+    },
+    {
+      "label": "Communication",
+      "value": 4.7
+    },
+    {
+      "label": "Accuracy",
+      "value": 4.6
+    },
+    {
+      "label": "Location",
+      "value": 4.6
+    },
+    {
+      "label": "Cleanliness",
+      "value": 4.5
+    },
+    {
+      "label": "Value",
+      "value": 4.4
+    }
+  ],
+  "checked": "2026-10-28"
+}

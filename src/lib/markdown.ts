@@ -21,7 +21,7 @@ export const homeMd = () => `# ${site.name}
 - Book: ${site.airbnb}
 - Phone and WhatsApp: ${site.phones.map((p) => p.display).join(', ')} (${site.hours})
 - Email: ${site.email}
-- Rating: ${site.rating.score} out of 5 from ${site.rating.count} Airbnb reviews; host ${site.host.name} is an Airbnb Superhost
+- Rating: ${site.rating.score} out of 5 from ${site.rating.count} Airbnb reviews${site.rating.superhost ? `; host ${site.host.name} is an Airbnb Superhost` : ''}
 
 ## The cottage
 

@@ -18,6 +18,14 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site 
 
 The workflow sets `SITE_URL` and `BASE_PATH`. Without them, the build targets https://samikshasnestinn.in at the root path, so the same code works when the domain is moved over.
 
+## Live Airbnb rating
+
+The rating, review count, Superhost badge and six category scores come from `src/data/airbnb.json`.
+
+`node tools/airbnb-stats.mjs` refreshes that file from the public listing page. The deploy workflow runs it before every build, and the workflow also runs daily at 06:00 IST, so the site follows Airbnb within a day.
+
+Airbnb has no public API, so this reads the listing page. If the request fails, the page layout changes, or the numbers look wrong (missing, out of range, or a sudden drop in reviews), the script keeps the last saved values and the build carries on.
+
 ## SEO and machine-readable content
 
 - **Sitemap and robots:** `@astrojs/sitemap` writes `sitemap-index.xml`. `robots.txt` is generated and points to it.

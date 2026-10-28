@@ -27,7 +27,7 @@ const { variant = 'card' } = Astro.props;
   <button class="btn btn--brass booking__submit" type="submit">
     Check availability <Icon name="arrow" />
   </button>
-  <p class="booking__note">Secure booking on Airbnb · Superhost · {site.rating.score} from {site.rating.count} reviews</p>
+  <p class="booking__note">Secure booking on Airbnb{site.rating.superhost && ' · Superhost'} · {site.rating.score} from {site.rating.count} reviews</p>
 </form>
 
 <style>
