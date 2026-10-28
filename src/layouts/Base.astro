@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { title, description, schema = [], transparentHeader = true } = Astro.props;
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const path = stripBase(Astro.url.pathname).replace(/\/$/, '') || '/';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = path === '/' ? `${site.name} · Tea-estate cottage in Kotagiri, Nilgiris` : `${title} · ${site.name}`;
 
