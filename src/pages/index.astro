@@ -1,0 +1,786 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import BookingForm from '../components/BookingForm.astro';
+import Icon from '../components/Icon.astro';
+import Gallery from '../components/Gallery.astro';
+import { homeImg } from '../lib/images';
+import { url } from '../lib/url';
+import { site, waLink, facts, rooms, amenities, scores, reviews, faqs } from '../data/site';
+import { routes } from '../data/explore';
+import { menu } from '../data/menu';
+
+const favourites = menu.flatMap((c) => c.dishes).filter((d) => d.favourite).map((d) => d.name);
+
+const description =
+  'A private four-bedroom cottage for up to 12 guests in a tea estate near Kotagiri, Nilgiris. Home-cooked meals, a private lawn and valley views. Book on Airbnb.';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'LodgingBusiness',
+    name: site.name,
+    description,
+    url: new URL(url('/'), Astro.site).href,
+    telephone: site.phones[0].tel,
+    email: site.email,
+    image: [new URL(url('/og.jpg'), Astro.site).href],
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: site.address.street,
+      addressLocality: site.address.locality,
+      addressRegion: site.address.region,
+      postalCode: site.address.postcode,
+      addressCountry: site.address.country
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+    hasMap: site.mapsLink,
+    numberOfRooms: 4,
+    occupancy: { '@type': 'QuantitativeValue', maxValue: 12 },
+    amenityFeature: amenities.map((a) => ({ '@type': 'LocationFeatureSpecification', name: a, value: true })),
+    sameAs: [site.airbnb]
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))
+  }
+];
+
+const slides = ['mist-valley', 'tea-hills', 'lawn', 'balcony-view'];
+
+const photos = [
+  { image: 'lawn', alt: 'The private lawn above the tea estate', span: 'wide' as const },
+  { image: 'living-1', alt: 'First living room' },
+  { image: 'bonfire-evening', alt: 'Bonfire on the lawn at night', span: 'tall' as const },
+  { image: 'dining', alt: 'Dining room' },
+  { image: 'living-2', alt: 'Second living room' },
+  { image: 'cottage-exterior', alt: 'The cottage from the drive', span: 'wide' as const },
+  { image: 'lounge', alt: 'Covered lounge' },
+  { image: 'sunset', alt: 'Sunset over the valley' },
+  { image: 'tents', alt: 'Tents pitched on the lawn' }
+];
+---
+<Base title="Home" description={description} schema={schema}>
+  <section class="hero" aria-label="Introduction">
+    <div class="hero__slides" aria-hidden="true">
+      {slides.map((s, i) => (
+        <div class="hero__slide" style={`--i:${i}`}>
+          <Image src={homeImg(s)} alt="" widths={[800, 1280, 2000]} sizes="100vw" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
+        </div>
+      ))}
+    </div>
+    <div class="wrap hero__body">
+      <p class="eyebrow">Kotagiri · The Nilgiris</p>
+      <h1>A private cottage in a Nilgiri tea estate</h1>
+      <p class="hero__lede">Four bedrooms for up to 12 guests, with a lawn of your own and meals cooked on site.</p>
+      <a class="hero__rating" href="#reviews">
+        <Icon name="star" /> {site.rating.score} · {site.rating.count} reviews on Airbnb
+      </a>
+    </div>
+    <div class="wrap hero__booking">
+      <BookingForm />
+    </div>
+  </section>
+
+  <section class="section" id="cottage">
+    <div class="wrap">
+      <header class="intro reveal">
+        <div>
+          <p class="eyebrow">The cottage</p>
+          <h2 class="title">Space for the whole group, surrounded by tea</h2>
+        </div>
+        <div class="intro__side">
+          <p class="lede">The cottage sits on its own terrace inside a working tea estate at West Brooke, between Kotagiri, Coonoor and Ooty. It has two living rooms, a dining room, a covered lounge and a fenced lawn with a fire pit.</p>
+          <dl class="facts">
+            {facts.map((f) => (
+              <div><dt>{f.label}</dt><dd>{f.value}</dd></div>
+            ))}
+          </dl>
+        </div>
+      </header>
+      <Gallery items={photos} />
+      <ul class="amenities reveal">
+        {amenities.map((a) => <li>{a}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--mist" id="rooms">
+    <div class="wrap">
+      <header class="intro reveal">
+        <div>
+          <p class="eyebrow">Bedrooms</p>
+          <h2 class="title">Two king rooms, two queen rooms</h2>
+        </div>
+        <p class="lede intro__side">Three bedrooms have their own bathroom. Up to five extra mattresses are available on request.</p>
+      </header>
+      <div class="rooms">
+        {rooms.map((room) => (
+          <figure class="room reveal">
+            <div class="frame room__img">
+              <Image src={homeImg(room.image)} alt={`${room.name}, ${room.bed.toLowerCase()}`} widths={[400, 640, 900]} sizes="(min-width: 1100px) 25vw, (min-width: 640px) 50vw, 100vw" />
+            </div>
+            <figcaption>
+              <span class="room__name">{room.name}</span>
+              <span class="room__meta">{room.bed} · {room.bath}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reviews">
+    <div class="wrap reviews">
+      <div class="reviews__summary reveal">
+        <p class="eyebrow">Reviews</p>
+        <p class="reviews__score">{site.rating.score}<span>/5</span></p>
+        <p class="reviews__sub">From {site.rating.count} Airbnb reviews. Hosted by {site.host.name}, a Superhost.</p>
+        <dl class="bars">
+          {scores.map((s) => (
+            <div class="bar">
+              <dt>{s.label}</dt>
+              <dd>
+                <span class="bar__track"><span class="bar__fill" style={`width:${(s.value / 5) * 100}%`}></span></span>
+                <span class="bar__value">{s.value.toFixed(1)}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <a class="link" href={site.airbnbReviews} target="_blank" rel="noopener">All reviews on Airbnb <Icon name="arrow" /></a>
+      </div>
+      <div class="quotes">
+        {reviews.map((r) => (
+          <figure class="quote reveal">
+            <blockquote><p>{r.quote}</p></blockquote>
+            <figcaption>{r.name} · {r.date}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--dark" id="dining">
+    <div class="wrap split">
+      <div class="frame split__img reveal">
+        <Image src={homeImg('bonfire')} alt="Fire pit on the lawn at night" widths={[500, 800, 1200]} sizes="(min-width: 900px) 45vw, 100vw" />
+      </div>
+      <div class="split__copy reveal">
+        <p class="eyebrow">Dining</p>
+        <h2 class="title">Meals cooked to order by our caretaker</h2>
+        <p class="lede">South Indian breakfasts, home-style lunches and dinners, and barbecue by the fire. Order at least four hours ahead; food is charged separately.</p>
+        <p class="split__label">Most mentioned in reviews</p>
+        <p class="split__list">{favourites.join(' · ')}</p>
+        <a class="btn btn--light" href={url("/dining/")}>View the menu <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="location">
+    <div class="wrap split split--reverse">
+      <div class="split__copy reveal">
+        <p class="eyebrow">Location</p>
+        <h2 class="title">West Brooke, 7 km from Kotagiri</h2>
+        <p class="lede">On the Kotagiri–Coonoor road, then 200 m along an estate track. Exact directions are sent after booking.</p>
+        <ul class="routes">
+          {routes.slice(0, 6).map((r) => (
+            <li><span>{r.from}</span><span>{r.time}</span></li>
+          ))}
+        </ul>
+        <div class="actions">
+          <a class="btn btn--primary" href={url("/explore/")}>Area guide <Icon name="arrow" /></a>
+          <a class="btn btn--ghost" href={site.mapsLink} target="_blank" rel="noopener"><Icon name="pin" /> Google Maps</a>
+        </div>
+      </div>
+      <div class="map reveal">
+        <iframe title="Map of Samiksha's Nest Inn near Kotagiri" src={site.mapsEmbed} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" id="faq">
+    <div class="wrap faq">
+      <div class="faq__head reveal">
+        <p class="eyebrow">FAQ</p>
+        <h2 class="title">Before you book</h2>
+        <p class="lede">Anything else? Message us; we usually reply within a few hours.</p>
+        <a class="btn btn--ghost" href={waLink()} target="_blank" rel="noopener"><Icon name="whatsapp" /> WhatsApp us</a>
+      </div>
+      <div class="faq__list">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}<span class="faq__icon" aria-hidden="true"></span></summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="book">
+    <div class="cta__img">
+      <Image src={homeImg('tea-hills')} alt="" widths={[800, 1400, 2000]} sizes="100vw" />
+    </div>
+    <div class="wrap cta__body reveal">
+      <p class="eyebrow">Book</p>
+      <h2 class="title">Check dates and book on Airbnb</h2>
+      <div class="cta__form">
+        <BookingForm variant="inline" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    color: var(--paper);
+    isolation: isolate;
+    padding-bottom: clamp(1.5rem, 4vw, 3rem);
+    overflow: hidden;
+  }
+
+  .hero__slides {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: var(--forest);
+  }
+
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    animation: slide 28s infinite;
+    animation-delay: calc(var(--i) * 7s);
+  }
+
+  .hero__slide:first-child {
+    opacity: 1;
+  }
+
+  .hero__slide :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @keyframes slide {
+    0% {
+      opacity: 0;
+      transform: scale(1.06);
+    }
+    4% {
+      opacity: 1;
+    }
+    25% {
+      opacity: 1;
+    }
+    30% {
+      opacity: 0;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slide {
+      animation: none;
+    }
+    .hero__slide:not(:first-child) {
+      display: none;
+    }
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgba(10, 16, 13, 0.5) 0%, rgba(10, 16, 13, 0) 28%),
+      linear-gradient(0deg, rgba(10, 16, 13, 0.82) 0%, rgba(10, 16, 13, 0.35) 45%, rgba(10, 16, 13, 0) 70%);
+  }
+
+  .hero__body {
+    align-self: end;
+    display: grid;
+    gap: 1.25rem;
+    padding-top: 8rem;
+    padding-bottom: 2rem;
+  }
+
+  .hero .eyebrow {
+    color: rgba(250, 247, 241, 0.8);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
+    line-height: 1.02;
+    max-width: 14ch;
+  }
+
+  .hero__lede {
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    max-width: 34rem;
+    color: rgba(250, 247, 241, 0.85);
+  }
+
+  .hero__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: rgba(250, 247, 241, 0.9);
+    border-bottom: 1px solid rgba(250, 247, 241, 0.35);
+    padding-bottom: 0.2rem;
+  }
+
+  .hero__rating :global(svg) {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: #e6c27a;
+  }
+
+  @media (max-width: 759px) {
+    .hero {
+      padding-bottom: 5.5rem;
+    }
+    .hero__booking {
+      display: none;
+    }
+  }
+
+  .intro {
+    display: grid;
+    gap: 1.5rem 4rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (min-width: 900px) {
+    .intro {
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+    }
+  }
+
+  .intro .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .intro__side {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .facts div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .facts dt {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  .facts dd {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    line-height: 1.1;
+  }
+
+  .amenities {
+    list-style: none;
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0;
+    color: var(--muted);
+    font-size: 0.925rem;
+  }
+
+  .amenities li:not(:last-child)::after {
+    content: '·';
+    margin-inline: 0.85rem;
+    color: var(--brass);
+  }
+
+  .rooms {
+    display: grid;
+    gap: 2rem 1.25rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1000px) {
+    .rooms {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .room {
+    margin: 0;
+  }
+
+  .room__img {
+    aspect-ratio: 4 / 5;
+    margin-bottom: 1rem;
+  }
+
+  .room:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  .room figcaption {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .room__name {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+  }
+
+  .room__meta {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .reviews {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  @media (min-width: 1000px) {
+    .reviews {
+      grid-template-columns: 1fr 1.7fr;
+      gap: 6rem;
+      align-items: start;
+    }
+  }
+
+  .reviews__summary {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+
+  .reviews__score {
+    font-family: var(--serif);
+    font-size: clamp(4rem, 8vw, 6rem);
+    line-height: 0.95;
+  }
+
+  .reviews__score span {
+    font-size: 0.35em;
+    color: var(--muted);
+    margin-left: 0.15em;
+  }
+
+  .reviews__sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .bars {
+    width: 100%;
+    margin: 0.75rem 0 1rem;
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+
+  .bar dd {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 2rem;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .bar__track {
+    height: 2px;
+    background: var(--stone);
+  }
+
+  .bar__fill {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+  }
+
+  .bar__value {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .quotes {
+    display: grid;
+    gap: 2.5rem 3rem;
+  }
+
+  @media (min-width: 700px) {
+    .quotes {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .quote {
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 1rem;
+  }
+
+  .quote blockquote {
+    margin: 0;
+  }
+
+  .quote p {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    line-height: 1.4;
+  }
+
+  .quote figcaption {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .split {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .split {
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+    }
+    .split--reverse .split__copy {
+      order: 0;
+    }
+  }
+
+  .split__img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .split__copy {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+  }
+
+  .split__label {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass-soft);
+  }
+
+  .split__list {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: rgba(250, 247, 241, 0.9);
+  }
+
+  .routes {
+    list-style: none;
+    margin: 0.5rem 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .routes li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.7rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+
+  .routes li span:last-child {
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .map {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--stone);
+  }
+
+  .map iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(0.6) contrast(1.02);
+  }
+
+  .faq {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 900px) {
+    .faq {
+      grid-template-columns: 1fr 1.6fr;
+      gap: 6rem;
+    }
+  }
+
+  .faq__head {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    align-content: start;
+  }
+
+  @media (min-width: 900px) {
+    .faq__head {
+      position: sticky;
+      top: 7rem;
+    }
+  }
+
+  .faq__list details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .faq__list details:first-child {
+    border-top: 1px solid var(--line);
+  }
+
+  .faq__list summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding-block: 1.35rem;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__list summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__icon {
+    position: relative;
+    width: 0.9rem;
+    height: 0.9rem;
+    flex: none;
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--ink);
+    transition: transform 0.3s var(--ease);
+  }
+
+  .faq__icon::after {
+    transform: rotate(90deg);
+  }
+
+  details[open] .faq__icon::after {
+    transform: rotate(0deg);
+  }
+
+  .faq__list details p {
+    padding-bottom: 1.5rem;
+    color: var(--muted);
+    max-width: 42rem;
+  }
+
+  .cta {
+    position: relative;
+    isolation: isolate;
+    color: var(--paper);
+    padding-block: clamp(6rem, 12vw, 10rem);
+  }
+
+  .cta__img {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .cta__img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cta::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(10, 16, 13, 0.62);
+  }
+
+  .cta__body {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .cta .eyebrow {
+    color: rgba(250, 247, 241, 0.75);
+  }
+
+  .cta__form {
+    width: min(100%, 25rem);
+    text-align: left;
+    margin-top: 1.25rem;
+  }
+</style>

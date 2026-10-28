@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import credits from '../data/credits.json';
+---
+<Base title="Photo credits" description="Credits and licences for photos used on the Samiksha's Nest Inn website." transparentHeader={false}>
+  <section class="section credits">
+    <div class="wrap">
+      <div class="credits__head">
+        <h1 class="title">Photo credits</h1>
+        <p class="lede">Photos of the cottage belong to Samiksha’s Nest Inn. Photos of places nearby come from Wikimedia Commons and are used under the licences below.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Photo</th><th scope="col">Author</th><th scope="col">Licence</th></tr>
+          </thead>
+          <tbody>
+            {credits.map((c) => (
+              <tr>
+                <th scope="row"><a href={c.source} target="_blank" rel="noopener">{c.title}</a></th>
+                <td>{c.author}</td>
+                <td>{c.license}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .credits {
+    padding-top: 9rem;
+  }
+
+  .credits__head {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    max-width: 40rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.9rem 1rem 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  thead th {
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  tbody th {
+    font-weight: 500;
+  }
+
+  td {
+    color: var(--muted);
+  }
+</style>

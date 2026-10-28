@@ -1,0 +1,441 @@
+---
+import '../styles/global.css';
+import { site, waLink, nav } from '../data/site';
+import Icon from '../components/Icon.astro';
+import { url, stripBase } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: object[];
+  transparentHeader?: boolean;
+}
+
+const { title, description, schema = [], transparentHeader = true } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = path === '/' ? `${site.name} · Tea-estate cottage in Kotagiri, Nilgiris` : `${title} · ${site.name}`;
+
+const sitemap = [
+  {
+    title: 'The stay',
+    links: [
+      { href: '/#cottage', label: 'The cottage' },
+      { href: '/#rooms', label: 'Bedrooms' },
+      { href: '/#reviews', label: 'Reviews' },
+      { href: '/#location', label: 'Location' },
+      { href: '/#faq', label: 'FAQ' }
+    ]
+  },
+  {
+    title: 'Dining',
+    links: [
+      { href: '/dining/#breakfast', label: 'Breakfast' },
+      { href: '/dining/#meals', label: 'Lunch and dinner' },
+      { href: '/dining/#fire', label: 'Bonfire and grill' },
+      { href: '/dining/#feast', label: 'Group dinners' },
+      { href: '/dining/#notes', label: 'How ordering works' }
+    ]
+  },
+  {
+    title: 'Area guide',
+    links: [
+      { href: '/explore/#kotagiri', label: 'Near Kotagiri' },
+      { href: '/explore/#coonoor', label: 'Coonoor' },
+      { href: '/explore/#ooty', label: 'Ooty' },
+      { href: '/explore/#plans', label: 'Day plans' },
+      { href: '/explore/#getting-here', label: 'Getting here' },
+      { href: '/explore/#practical', label: 'Weather and e-pass' }
+    ]
+  }
+];
+---
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#1f3329" />
+    <link rel="icon" href={url("/favicon.svg")} type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(url('/og.jpg'), Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <a class="sr-only" href="#main">Skip to content</a>
+    <header class:list={['site-header', { 'site-header--solid': !transparentHeader }]} data-header>
+      <div class="wrap site-header__inner">
+        <a class="wordmark" href={url("/")}>Samiksha’s Nest Inn</a>
+        <nav class="nav" aria-label="Main">
+          {nav.map((item) => (
+            <a href={url(item.href)} aria-current={path !== '/' && item.href.startsWith(path) ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <div class="site-header__actions">
+          <a class="btn btn--brass site-header__book" href={url("/#book")}>Check dates</a>
+          <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+            <span class="sr-only">Menu</span>
+            <Icon name="menu" />
+          </button>
+        </div>
+      </div>
+      <div class="mobile-nav" id="mobile-nav" hidden data-mobile-nav>
+        <nav class="wrap" aria-label="Mobile">
+          {nav.map((item) => <a href={url(item.href)}>{item.label}</a>)}
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="site-footer__cta">
+          <p class="site-footer__statement">Samiksha’s Nest Inn</p>
+          <div class="site-footer__buttons">
+            <a class="btn btn--brass" href={site.airbnb} target="_blank" rel="noopener">Book on Airbnb</a>
+            <a class="btn btn--outline-light" href={waLink()} target="_blank" rel="noopener"><Icon name="whatsapp" /> WhatsApp</a>
+          </div>
+        </div>
+
+        <div class="site-footer__grid">
+          {sitemap.map((col) => (
+            <nav aria-label={col.title}>
+              <p class="site-footer__label">{col.title}</p>
+              <ul>
+                {col.links.map((l) => <li><a href={url(l.href)}>{l.label}</a></li>)}
+              </ul>
+            </nav>
+          ))}
+          <div>
+            <p class="site-footer__label">Contact</p>
+            <ul>
+              {site.phones.map((p) => <li><a href={`tel:${p.tel}`}>{p.display}</a></li>)}
+              <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+              <li class="site-footer__muted">{site.hours}</li>
+            </ul>
+          </div>
+          <div>
+            <p class="site-footer__label">Address</p>
+            <address>
+              {site.address.street}<br />
+              {site.address.locality}, {site.address.district}<br />
+              {site.address.region} {site.address.postcode}
+            </address>
+            <a class="site-footer__arrow" href={site.mapsLink} target="_blank" rel="noopener">Google Maps <Icon name="arrow" /></a>
+          </div>
+        </div>
+
+        <div class="site-footer__bottom">
+          <p>© {new Date().getFullYear()} Samiksha’s Nest Inn · Kotagiri, The Nilgiris</p>
+          <p><a href={url("/credits/")}>Photo credits</a> · <a href="#main">Back to top</a></p>
+        </div>
+      </div>
+    </footer>
+
+    <div class="mobile-bar">
+      <a class="btn btn--ghost" href={waLink()} target="_blank" rel="noopener" aria-label="WhatsApp"><Icon name="whatsapp" /></a>
+      <a class="btn btn--brass" href={site.airbnb} target="_blank" rel="noopener">Check availability on Airbnb</a>
+    </div>
+
+    <style>
+      .site-header {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 50;
+        color: var(--paper);
+        padding-top: env(safe-area-inset-top, 0px);
+        transition: background 0.4s var(--ease), color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+      }
+
+      .site-header.is-scrolled,
+      .site-header--solid,
+      .site-header.is-open {
+        background: rgba(250, 247, 241, 0.95);
+        backdrop-filter: blur(14px);
+        color: var(--ink);
+        box-shadow: 0 1px 0 var(--line);
+      }
+
+      .site-header__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        min-height: 4.5rem;
+      }
+
+      .wordmark {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        letter-spacing: -0.005em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .nav {
+        display: none;
+        gap: 2.25rem;
+      }
+
+      .nav a {
+        font-size: 0.875rem;
+        text-decoration: none;
+        opacity: 0.85;
+        position: relative;
+      }
+
+      .nav a:hover,
+      .nav a[aria-current='page'] {
+        opacity: 1;
+      }
+
+      .nav a[aria-current='page']::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -6px;
+        height: 1px;
+        background: currentColor;
+      }
+
+      .site-header__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .site-header__book {
+        display: none;
+        min-height: 2.6rem;
+        padding-inline: 1.3rem;
+      }
+
+      .menu-toggle {
+        display: grid;
+        place-items: center;
+        width: 2.6rem;
+        height: 2.6rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+      }
+
+      .menu-toggle :global(svg) {
+        width: 1.4rem;
+        height: 1.4rem;
+      }
+
+      .mobile-nav nav {
+        display: grid;
+        padding-block: 0.5rem 1.5rem;
+      }
+
+      .mobile-nav a {
+        font-family: var(--serif);
+        font-size: 1.5rem;
+        text-decoration: none;
+        padding-block: 0.6rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      @media (min-width: 1000px) {
+        .nav,
+        .site-header__book {
+          display: inline-flex;
+        }
+        .menu-toggle,
+        .mobile-nav {
+          display: none !important;
+        }
+      }
+
+      .site-footer {
+        background: var(--ink);
+        color: rgba(250, 247, 241, 0.72);
+        padding-block: clamp(4rem, 8vw, 6rem) calc(2rem + 5rem);
+        font-size: 0.925rem;
+      }
+
+      @media (min-width: 1000px) {
+        .site-footer {
+          padding-bottom: 2.5rem;
+        }
+      }
+
+      .site-footer a {
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      .site-footer a:hover {
+        color: var(--paper);
+      }
+
+      .site-footer__cta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: end;
+        gap: 2rem;
+        padding-bottom: clamp(2.5rem, 5vw, 4rem);
+        border-bottom: 1px solid var(--line-light);
+      }
+
+      .site-footer__statement {
+        font-family: var(--serif);
+        font-size: clamp(2rem, 5vw, 3.75rem);
+        line-height: 1;
+        color: var(--paper);
+        letter-spacing: -0.02em;
+      }
+
+      .site-footer__buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .site-footer__grid {
+        display: grid;
+        gap: 2.5rem 2rem;
+        grid-template-columns: repeat(2, 1fr);
+        padding-block: clamp(2.5rem, 5vw, 4rem);
+      }
+
+      .site-footer__grid > div {
+        grid-column: 1 / -1;
+      }
+
+      @media (min-width: 900px) {
+        .site-footer__grid {
+          grid-template-columns: repeat(3, 1fr) 1.3fr 1.1fr;
+        }
+        .site-footer__grid > div {
+          grid-column: auto;
+        }
+      }
+
+      .site-footer__grid ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      .site-footer__grid address {
+        font-style: normal;
+        line-height: 1.7;
+      }
+
+      .site-footer__label {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--brass-soft);
+        margin-bottom: 1rem;
+      }
+
+      .site-footer__muted {
+        opacity: 0.6;
+      }
+
+      .site-footer__arrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-top: 0.75rem;
+        color: var(--paper);
+        white-space: nowrap;
+      }
+
+      .site-footer__arrow :global(svg) {
+        width: 0.9rem;
+        height: 0.9rem;
+      }
+
+      .site-footer__bottom {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--line-light);
+        font-size: 0.8125rem;
+        opacity: 0.6;
+      }
+
+      .mobile-bar {
+        position: fixed;
+        inset: auto 0 0;
+        z-index: 40;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.6rem;
+        padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom, 0px));
+        background: rgba(250, 247, 241, 0.96);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 -1px 0 var(--line);
+      }
+
+      .mobile-bar .btn {
+        min-height: 3rem;
+      }
+
+      .mobile-bar .btn--ghost {
+        width: 3rem;
+        padding: 0;
+        color: #1da851;
+      }
+
+      @media (min-width: 1000px) {
+        .mobile-bar {
+          display: none;
+        }
+      }
+    </style>
+
+    <script>
+      const header = document.querySelector<HTMLElement>('[data-header]')!;
+      const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+      const panel = document.querySelector<HTMLElement>('[data-mobile-nav]')!;
+
+      const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 40);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      const setOpen = (open: boolean) => {
+        panel.hidden = !open;
+        toggle.setAttribute('aria-expanded', String(open));
+        header.classList.toggle('is-open', open);
+      };
+      toggle.addEventListener('click', () => setOpen(panel.hidden));
+      panel.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+
+      const io = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            }
+          }),
+        { rootMargin: '0px 0px -8% 0px' }
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

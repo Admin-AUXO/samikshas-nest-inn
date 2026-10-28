@@ -1,0 +1,137 @@
+---
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  variant?: 'card' | 'inline';
+}
+const { variant = 'card' } = Astro.props;
+---
+<form class:list={['booking', `booking--${variant}`]} data-booking data-base={site.airbnb} novalidate>
+  <div class="booking__field">
+    <label for={`in-${variant}`}>Check in</label>
+    <input id={`in-${variant}`} name="check_in" type="date" required />
+  </div>
+  <div class="booking__field">
+    <label for={`out-${variant}`}>Check out</label>
+    <input id={`out-${variant}`} name="check_out" type="date" required />
+  </div>
+  <div class="booking__field booking__field--guests">
+    <label for={`guests-${variant}`}>Guests</label>
+    <select id={`guests-${variant}`} name="adults">
+      {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
+        <option value={n} selected={n === 6}>{n} {n === 1 ? 'guest' : 'guests'}</option>
+      ))}
+    </select>
+  </div>
+  <button class="btn btn--brass booking__submit" type="submit">
+    Check availability <Icon name="arrow" />
+  </button>
+  <p class="booking__note">Secure booking on Airbnb · Superhost · {site.rating.score} from {site.rating.count} reviews</p>
+</form>
+
+<style>
+  .booking {
+    display: grid;
+    gap: 0.75rem;
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 1.25rem;
+    box-shadow: 0 30px 60px -30px rgba(10, 20, 15, 0.45);
+  }
+
+  @media (min-width: 760px) {
+    .booking--card {
+      grid-template-columns: 1fr 1fr 0.9fr auto;
+      align-items: end;
+      padding: 1rem 1rem 1rem 1.5rem;
+    }
+    .booking--card .booking__note {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .booking__field {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .booking__field label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .booking__field input,
+  .booking__field select {
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.975rem;
+  }
+
+  .booking__field input:focus,
+  .booking__field select:focus {
+    outline: none;
+    border-color: var(--brass);
+  }
+
+  .booking__submit {
+    min-height: 2.9rem;
+  }
+
+  .booking__note {
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+</style>
+
+<script>
+  const iso = (d: Date) => {
+    const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return z.toISOString().slice(0, 10);
+  };
+
+  document.querySelectorAll<HTMLFormElement>('[data-booking]').forEach((form) => {
+    const checkIn = form.querySelector<HTMLInputElement>('input[name="check_in"]')!;
+    const checkOut = form.querySelector<HTMLInputElement>('input[name="check_out"]')!;
+    const today = new Date();
+    checkIn.min = iso(today);
+    checkOut.min = iso(new Date(today.getTime() + 86400000));
+
+    checkIn.addEventListener('change', () => {
+      if (!checkIn.value) return;
+      const next = new Date(checkIn.value + 'T00:00:00');
+      next.setDate(next.getDate() + 1);
+      checkOut.min = iso(next);
+      if (!checkOut.value || checkOut.value <= checkIn.value) {
+        const two = new Date(checkIn.value + 'T00:00:00');
+        two.setDate(two.getDate() + 2);
+        checkOut.value = iso(two);
+      }
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const url = new URL(form.dataset.base!);
+      const inDate = String(data.get('check_in') || '');
+      const outDate = String(data.get('check_out') || '');
+      if (inDate && outDate && outDate > inDate) {
+        url.searchParams.set('check_in', inDate);
+        url.searchParams.set('check_out', outDate);
+      }
+      url.searchParams.set('adults', String(data.get('adults') || '2'));
+      window.open(url.toString(), '_blank', 'noopener');
+    });
+  });
+</script>

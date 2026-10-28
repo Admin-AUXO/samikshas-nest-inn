@@ -1,0 +1,443 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { spotImg } from '../lib/images';
+import { areas, itineraries, routes, arrival, weather, pack, essentials } from '../data/explore';
+import { site, waLink } from '../data/site';
+
+const plan = waLink("Hi, we're planning a stay at Samiksha's Nest Inn. Could you help with a day plan and a cab?");
+const mapLink = (name: string) =>
+  `https://www.google.com/maps/dir/?api=1&origin=${site.geo.lat},${site.geo.lng}&destination=${encodeURIComponent(name + ', Nilgiris')}`;
+---
+<Base title="Area guide" description="Drive times from Samiksha's Nest Inn to Kotagiri, Coonoor and Ooty sights, day plans, how to get here, the Nilgiris e-pass and weather.">
+  <section class="page-hero">
+    <div class="page-hero__img">
+      <Image src={spotImg('kodanad')} alt="" widths={[800, 1400, 1842]} sizes="100vw" loading="eager" />
+    </div>
+    <div class="wrap page-hero__body">
+      <p class="eyebrow">Area guide</p>
+      <h1>Kotagiri, Coonoor and Ooty from one base</h1>
+      <p>Drive times are from the cottage, measured on Google Maps.</p>
+    </div>
+  </section>
+
+  <nav class="jump" aria-label="On this page">
+    <div class="wrap jump__inner">
+      {areas.map((a) => <a href={`#${a.id}`}>{a.title}</a>)}
+      <a href="#plans">Day plans</a>
+      <a href="#getting-here">Getting here</a>
+      <a href="#practical">Practical</a>
+    </div>
+  </nav>
+
+  {areas.map((area, ai) => (
+    <section class:list={['section area', { 'section--mist': ai % 2 === 1 }]} id={area.id}>
+      <div class="wrap">
+        <header class="area__head reveal">
+          <p class="eyebrow">{String(ai + 1).padStart(2, '0')}</p>
+          <h2 class="title">{area.title}</h2>
+          <p class="lede">{area.intro}</p>
+        </header>
+        <div class="area__grid">
+          {area.spots.map((s) => (
+            <article class="place reveal">
+              {s.image && (
+                <div class="frame place__img">
+                  <Image src={spotImg(s.image)} alt={s.name} widths={[400, 700, 1000]} sizes="(min-width: 1000px) 33vw, (min-width: 640px) 50vw, 100vw" />
+                </div>
+              )}
+              <p class="place__meta">{s.mins} · {s.km} km</p>
+              <h3>{s.name}</h3>
+              <p class="place__text">{s.text}</p>
+              {s.tip && <p class="place__tip">{s.tip}</p>}
+              <a class="place__link" href={mapLink(s.name)} target="_blank" rel="noopener">Directions <Icon name="arrow" /></a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="section section--dark" id="plans">
+    <div class="wrap">
+      <header class="area__head reveal">
+        <p class="eyebrow">Day plans</p>
+        <h2 class="title">Four simple itineraries</h2>
+        <p class="lede">We can build a plan around your dates and arrange a cab and guide.</p>
+      </header>
+      <div class="plans">
+        {itineraries.map((it) => (
+          <article class="plan reveal">
+            <h3>{it.title}</h3>
+            <ol>
+              {it.stops.map((s) => <li>{s}</li>)}
+            </ol>
+          </article>
+        ))}
+      </div>
+      <a class="btn btn--light plans__cta" href={plan} target="_blank" rel="noopener"><Icon name="whatsapp" /> Ask for a day plan</a>
+    </div>
+  </section>
+
+  <section class="section" id="getting-here">
+    <div class="wrap getting">
+      <div>
+        <header class="area__head reveal">
+          <p class="eyebrow">Getting here</p>
+          <h2 class="title">By air, rail or road</h2>
+        </header>
+        <div class="arrival">
+          {arrival.map((a) => (
+            <div class="arrival__item reveal">
+              <h3>{a.title}</h3>
+              <p>{a.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="table-wrap reveal">
+        <table>
+          <caption>Drive times from the cottage</caption>
+          <thead>
+            <tr><th scope="col">Place</th><th scope="col">Distance</th><th scope="col">Time</th></tr>
+          </thead>
+          <tbody>
+            {routes.map((r) => (
+              <tr><th scope="row">{r.from}</th><td>{r.km}</td><td>{r.time}</td></tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="table-note">Google Maps, without heavy traffic. Allow longer on summer weekends and in rain.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" id="practical">
+    <div class="wrap">
+      <header class="area__head reveal">
+        <p class="eyebrow">Practical</p>
+        <h2 class="title">Before you travel</h2>
+      </header>
+      <div class="essentials">
+        {essentials.map((e) => (
+          <article class="essential reveal">
+            <h3>{e.title}</h3>
+            <p>{e.text}</p>
+            {e.link && <a class="link" href={e.link.href} target="_blank" rel="noopener">{e.link.label} <Icon name="arrow" /></a>}
+          </article>
+        ))}
+      </div>
+      <div class="climate">
+        <div class="reveal">
+          <h3 class="climate__title">Weather</h3>
+          <ul class="seasons">
+            {weather.map((w) => (
+              <li>
+                <span class="seasons__months">{w.months}</span>
+                <span class="seasons__temp">{w.temp}</span>
+                <span class="seasons__text">{w.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="reveal">
+          <h3 class="climate__title">What to pack</h3>
+          <ul class="pack">
+            {pack.map((p) => <li>{p}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jump {
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: calc(4.5rem + env(safe-area-inset-top, 0px));
+    z-index: 5;
+    background: rgba(250, 247, 241, 0.96);
+    backdrop-filter: blur(10px);
+  }
+
+  .jump__inner {
+    display: flex;
+    gap: 1.75rem;
+    overflow-x: auto;
+    padding-block: 1rem;
+  }
+
+  .jump a {
+    flex: none;
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: var(--muted);
+  }
+
+  .jump a:hover {
+    color: var(--ink);
+  }
+
+  .area {
+    scroll-margin-top: 4rem;
+  }
+
+  .area__head {
+    display: grid;
+    gap: 0.9rem;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    max-width: 40rem;
+  }
+
+  .area__grid {
+    display: grid;
+    gap: 3rem 1.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  }
+
+  .place {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .place__img {
+    aspect-ratio: 3 / 2;
+    margin-bottom: 0.75rem;
+  }
+
+  .place:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  .place__meta {
+    font-size: 0.8125rem;
+    color: var(--brass);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .place h3 {
+    font-size: 1.4rem;
+  }
+
+  .place__text {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .place__tip {
+    font-size: 0.875rem;
+    color: var(--ink);
+    padding-left: 0.9rem;
+    border-left: 1px solid var(--brass);
+  }
+
+  .place__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .place__link:hover {
+    border-color: currentColor;
+  }
+
+  .place__link :global(svg) {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .plans {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+
+  .plan {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-light);
+  }
+
+  .plan h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .plan ol {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.45rem;
+    color: rgba(250, 247, 241, 0.75);
+    font-size: 0.95rem;
+  }
+
+  .plans__cta {
+    margin-top: 3rem;
+  }
+
+  .getting {
+    display: grid;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1000px) {
+    .getting {
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+    }
+  }
+
+  .arrival {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .arrival__item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .arrival__item p {
+    color: var(--muted);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    align-self: start;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  caption {
+    text-align: left;
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.8rem 0.75rem 0.8rem 0;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  thead th {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  tbody th {
+    font-weight: 400;
+    white-space: normal;
+  }
+
+  td {
+    color: var(--muted);
+  }
+
+  .table-note {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .essentials {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .essential {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    justify-items: start;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--ink);
+  }
+
+  .essential h3 {
+    font-size: 1.3rem;
+  }
+
+  .essential p {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .climate {
+    display: grid;
+    gap: 3rem;
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  @media (min-width: 900px) {
+    .climate {
+      grid-template-columns: 1.6fr 1fr;
+      gap: 6rem;
+    }
+  }
+
+  .climate__title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .seasons,
+  .pack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .seasons li {
+    display: grid;
+    grid-template-columns: 6.5rem 6rem 1fr;
+    gap: 1rem;
+    padding-block: 0.9rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 600px) {
+    .seasons li {
+      grid-template-columns: 1fr auto;
+    }
+    .seasons__text {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .seasons__temp {
+    color: var(--brass);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .seasons__text {
+    color: var(--muted);
+  }
+
+  .pack li {
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+</style>

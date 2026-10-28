@@ -1,0 +1,165 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { homeImg } from '../lib/images';
+
+interface Props {
+  items: { image: string; alt: string; span?: 'wide' | 'tall' }[];
+}
+const { items } = Astro.props;
+const large = await Promise.all(items.map((i) => getImage({ src: homeImg(i.image), width: 1800, format: 'webp' })));
+---
+<div class="mosaic">
+  {items.map((item, i) => (
+    <button class:list={['mosaic__item frame', item.span && `mosaic__item--${item.span}`]} type="button" data-full={large[i].src} data-alt={item.alt} aria-label={`View larger: ${item.alt}`}>
+      <Image src={homeImg(item.image)} alt={item.alt} widths={[400, 700, 1100]} sizes="(min-width: 900px) 40vw, 100vw" />
+    </button>
+  ))}
+</div>
+<dialog class="lightbox" data-lightbox>
+  <button class="lightbox__close" type="button" data-close aria-label="Close"><Icon name="close" /></button>
+  <button class="lightbox__nav lightbox__nav--prev" type="button" data-prev aria-label="Previous photo"><Icon name="arrow" /></button>
+  <figure>
+    <img alt="" data-img />
+    <figcaption data-cap></figcaption>
+  </figure>
+  <button class="lightbox__nav" type="button" data-next aria-label="Next photo"><Icon name="arrow" /></button>
+</dialog>
+
+<style>
+  .mosaic {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: clamp(9rem, 22vw, 17rem);
+    grid-auto-flow: dense;
+  }
+
+  @media (min-width: 900px) {
+    .mosaic {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  .mosaic__item {
+    padding: 0;
+    border: 0;
+    cursor: zoom-in;
+  }
+
+  .mosaic__item--wide {
+    grid-column: span 2;
+  }
+
+  .mosaic__item--tall {
+    grid-row: span 2;
+  }
+
+  .mosaic__item:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  .lightbox {
+    width: 100vw;
+    height: 100svh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(12, 16, 14, 0.97);
+    color: var(--paper);
+  }
+
+  .lightbox[open] {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .lightbox::backdrop {
+    background: rgba(12, 16, 14, 0.9);
+  }
+
+  .lightbox figure {
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+    padding: 4rem 0.25rem;
+  }
+
+  .lightbox img {
+    max-height: 80svh;
+    width: auto;
+  }
+
+  .lightbox figcaption {
+    font-size: 0.875rem;
+    color: rgba(250, 247, 241, 0.7);
+    text-align: center;
+  }
+
+  .lightbox button {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid rgba(250, 247, 241, 0.25);
+    background: transparent;
+    color: var(--paper);
+    cursor: pointer;
+    margin: 0.5rem;
+  }
+
+  .lightbox button :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .lightbox__close {
+    position: absolute;
+    top: calc(1rem + env(safe-area-inset-top, 0px));
+    right: 1rem;
+  }
+
+  .lightbox__nav--prev :global(svg) {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  if (dialog) {
+    const items = [...document.querySelectorAll<HTMLButtonElement>('.mosaic__item')];
+    const img = dialog.querySelector<HTMLImageElement>('[data-img]')!;
+    const cap = dialog.querySelector<HTMLElement>('[data-cap]')!;
+    let index = 0;
+
+    const show = (i: number) => {
+      index = (i + items.length) % items.length;
+      img.src = items[index].dataset.full!;
+      img.alt = items[index].dataset.alt!;
+      cap.textContent = items[index].dataset.alt!;
+    };
+
+    items.forEach((item, i) =>
+      item.addEventListener('click', () => {
+        show(i);
+        dialog.showModal();
+      })
+    );
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+    dialog.querySelector('[data-prev]')!.addEventListener('click', () => show(index - 1));
+    dialog.querySelector('[data-next]')!.addEventListener('click', () => show(index + 1));
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+  }
+</script>
